@@ -46,27 +46,110 @@ public class FirebaseMethods
         }
     }
 
-    public boolean checkIfUsernameExists(String username, DataSnapshot dataSnapshot)
+    /**
+     * update 'user_account_settings' node for the current user
+     *
+     * @param displayName
+     * @param website
+     * @param description
+     * @param phoneNumber
+     */
+    public void updateUserAccountSettings(
+        String displayName,
+        String website,
+        String description,
+        long phoneNumber)
     {
-        Log.d(TAG, "checkIfUsernameExists: Checking if username already exists.");
-
-        User user = new User();
-
-        for (DataSnapshot ds : dataSnapshot.child(userId).getChildren())
+        Log.d(TAG, "updateUserAccountSettings: updating user account settings.");
+        if (displayName != null)
         {
-            Log.d(TAG, String.format("checkIfUsernameExists: datasnapshot: %s", ds));
-
-            user.setUsername(ds.getValue(User.class).getUsername());
-            Log.d(TAG, "checkIfUsernameExists: username: "+user.getUsername());
-
-            if (StringManipulation.expandUsername(user.getUsername()).equals(username))
-            {
-                Log.d(TAG, "checkIfUsernameExists: FOUND A MATCH: "+user.getUsername());
-                return true;
-            }
+            myRef.child(m_context.getString(R.string.dbname_user_account_settings))
+                .child(userId)
+                .child(m_context.getString(R.string.field_display_name))
+                .setValue(displayName);
         }
-        return false;
+
+        if (website != null)
+        {
+            myRef.child(m_context.getString(R.string.dbname_user_account_settings))
+                .child(userId)
+                .child(m_context.getString(R.string.field_website))
+                .setValue(website);
+        }
+
+        if (description != null)
+        {
+            myRef.child(m_context.getString(R.string.dbname_user_account_settings))
+                .child(userId)
+                .child(m_context.getString(R.string.field_description))
+                .setValue(description);
+        }
+
+        if (phoneNumber != 0)
+        {
+            myRef.child(m_context.getString(R.string.dbname_users))
+                .child(userId)
+                .child(m_context.getString(R.string.field_phone_number))
+                .setValue(phoneNumber);
+        }
     }
+
+    /**
+     * update the username in 'users' node and 'user_account_settings' node
+     *
+     * @param username
+     */
+    public void updateUsername(String username)
+    {
+        Log.d(TAG, String.format("updateUsername: updating username to: %s", username));
+
+        myRef.child(m_context.getString(R.string.dbname_users))
+            .child(userId)
+            .child(m_context.getString(R.string.field_username))
+            .setValue(username);
+
+        myRef.child(m_context.getString(R.string.dbname_user_account_settings))
+            .child(userId)
+            .child(m_context.getString(R.string.field_username))
+            .setValue(username);
+    }
+
+    /**
+     * update the email in the 'users' node
+     *
+     * @param email
+     */
+    public void updateEmail(String email)
+    {
+        Log.d(TAG, String.format("updateUsername: updating username to: %s", email));
+
+        myRef.child(m_context.getString(R.string.dbname_users))
+            .child(userId)
+            .child(m_context.getString(R.string.field_email))
+            .setValue(email);
+    }
+
+//    public boolean checkIfUsernameExists(String username, DataSnapshot dataSnapshot)
+//    {
+//        Log.d(TAG, "checkIfUsernameExists: Checking if username already exists.");
+//
+//        User user = new User();
+//
+//        for (DataSnapshot ds : dataSnapshot.child(userId).getChildren())
+//        {
+//            Log.d(TAG, String.format("checkIfUsernameExists: datasnapshot: %s", ds));
+//
+//            user.setUsername(ds.getValue(User.class).getUsername());
+//            Log.d(TAG, "checkIfUsernameExists: username: "+user.getUsername());
+//
+//            if (StringManipulation.expandUsername(user.getUsername()).equals(username))
+//            {
+//                Log.d(TAG, "checkIfUsernameExists: FOUND A MATCH: "+user.getUsername());
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * Register a new email and password to Firebase Authentication.
@@ -117,7 +200,9 @@ public class FirebaseMethods
                     {
                         if (!task.isSuccessful())
                         {
-                            Toast.makeText(m_context, "Couldn't send verification email.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(m_context,
+                                "Couldn't send verification email.",
+                                Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -127,13 +212,19 @@ public class FirebaseMethods
     /**
      * Add information to the users node
      * Add information to the user_account_settings node
+     *
      * @param email
      * @param username
      * @param description
      * @param website
      * @param profile_photo
      */
-    public void addNewUser(String email, String username, String description, String website, String profile_photo)
+    public void addNewUser(
+        String email,
+        String username,
+        String description,
+        String website,
+        String profile_photo)
     {
         User user = new User(userId, email, 1, StringManipulation.condenseUsername(username));
 
@@ -158,7 +249,9 @@ public class FirebaseMethods
     /**
      * Retrieves the account settings for the user currently logged in.
      * Databse: user_account_settings node
+     *
      * @param dataSnapshot
+     *
      * @return
      */
     public UserSettings getUserSettings(DataSnapshot dataSnapshot)

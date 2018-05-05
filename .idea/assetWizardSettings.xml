@@ -85,7 +85,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/av/ic_art_track_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_close_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -95,8 +95,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="bfbfbf" />
-                            <entry key="outputName" value="ic_username" />
+                            <entry key="outputName" value="ic_close" />
                             <entry key="sourceFile" value="$USER_HOME$" />
                           </map>
                         </option>

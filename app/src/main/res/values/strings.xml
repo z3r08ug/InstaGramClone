@@ -5,6 +5,7 @@
     <string name="edit_profile_fragment">Edit Profile</string>
     <string name="sign_out_fragment">Sign Out</string>
     <string name="profile_fragment">Profile</string>
+    <string name="view_post_fragment">View Post</string>
     
     <!--Dialog names-->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
@@ -24,6 +25,7 @@
     <string name="field_website">website</string>
     <string name="field_description">description</string>
     <string name="field_phone_number">phone_number</string>
+    <string name="field_user_id">user_id</string>
 
     <!--Photo types-->
     <string name="new_photo">new_photo</string>
@@ -31,10 +33,15 @@
     
     <!--Intent extras-->
     <string name="calling_activity">calling_activity</string>
-    <string name="profile_activity">Profile Activity</string>
     <string name="selected_image">selected_image</string>
     <string name="return_to_fragment">return_to_fragment</string>
     <string name="selected_bitmap">selected_bitmap</string>
+
+    <!--Activity Names-->
+    <string name="profile_activity">Profile Activity</string>
+
+    <!--Bundle Arg Names-->
+    <string name="activity_number">activity_number</string>
 
     <!--Share Tab names-->
     <string name="gallery">GALLERY</string>

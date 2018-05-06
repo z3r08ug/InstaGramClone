@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -43,9 +44,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment
 {
-    //constants
     private static final String TAG = String.format("%s_TAG",
         ProfileFragment.class.getSimpleName());
+    
+    public interface OnGridImageSelectedListener
+    {
+        void onGridImageSelected(Photo photo, int activityNumber);
+    }
+    
+    OnGridImageSelectedListener m_onGridImageSelectedListener;
+    
     private static final int ACTIVITY_NUM = 4;
     private static final int NUM_GRID_COLS = 3;
     
@@ -110,10 +118,25 @@ public class ProfileFragment extends Fragment
                 Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
                 intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
                 startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
 
         return view;
+    }
+    
+    @Override
+    public void onAttach(Context context)
+    {
+        try
+        {
+            m_onGridImageSelectedListener = (OnGridImageSelectedListener) getActivity();
+        }
+        catch (ClassCastException e)
+        {
+            Log.e(TAG, String.format("onAttach: ClassCastException: %s", e.getMessage()));
+        }
+        super.onAttach(context);
     }
     
     private void setupGridView()
@@ -147,6 +170,15 @@ public class ProfileFragment extends Fragment
                 GridImageAdapter adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview,
                         "", imgUrls);
                 m_gridView.setAdapter(adapter);
+                
+                m_gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                    {
+                        m_onGridImageSelectedListener.onGridImageSelected(photos.get(position), ACTIVITY_NUM);
+                    }
+                });
             }
     
             @Override
@@ -188,6 +220,7 @@ public class ProfileFragment extends Fragment
                 Log.d(TAG, "onClick: navigating to account settings");
                 Intent intent = new Intent(m_context, AccountSettingsActivity.class);
                 startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
     }
@@ -199,7 +232,7 @@ public class ProfileFragment extends Fragment
     {
         Log.d(TAG, "setupBottomNavigationView: Setting up nav.");
         BottomNavigationViewHelper.setupBottomNavigationView(m_bottomNavigationView);
-        BottomNavigationViewHelper.enableNavigation(m_context, m_bottomNavigationView);
+        BottomNavigationViewHelper.enableNavigation(m_context, getActivity(), m_bottomNavigationView);
 
         Menu menu = m_bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);

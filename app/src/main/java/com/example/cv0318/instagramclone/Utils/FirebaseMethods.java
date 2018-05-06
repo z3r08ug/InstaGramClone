@@ -66,7 +66,7 @@ public class FirebaseMethods
         }
     }
     
-    public void uploadNewPhoto(String photoType, final String caption, int count, String imgUrl)
+    public void uploadNewPhoto(String photoType, final String caption, int count, String imgUrl, Bitmap bm)
     {
         Log.d(TAG, "uploadNewPhoto: attempting to upload a new photo.");
         
@@ -81,7 +81,11 @@ public class FirebaseMethods
                     .child(String.format("%s/%s/photo%d", filePaths.FIREBASE_IMAGE_STORAGE, user_id, count + 1));
             
             //convert image url to bitmap
-            Bitmap bm = ImageManager.getBitmap(imgUrl);
+            if (bm == null)
+            {
+                bm = ImageManager.getBitmap(imgUrl);
+            }
+            
             byte[] bytes = ImageManager.getBytesFromBitmap(bm, 100);
             
             UploadTask uploadTask = null;
@@ -130,16 +134,15 @@ public class FirebaseMethods
         {
             Log.d(TAG, "uploadNewPhoto: uploading new profile photo.");
     
-            ((AccountSettingsActivity)m_context).setViewPager(
-                    ((AccountSettingsActivity)m_context).m_pagerAdapter.getFragmentNumber(m_context.getString(R.string.edit_profile_fragment))
-            );
-    
             String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
             StorageReference storageReference = m_storageReference
                     .child(String.format("%s/%s/profile_photo", filePaths.FIREBASE_IMAGE_STORAGE, user_id));
     
             //convert image url to bitmap
-            Bitmap bm = ImageManager.getBitmap(imgUrl);
+            if (bm == null)
+            {
+                bm = ImageManager.getBitmap(imgUrl);
+            }
             byte[] bytes = ImageManager.getBytesFromBitmap(bm, 100);
     
             UploadTask uploadTask = null;
@@ -163,6 +166,10 @@ public class FirebaseMethods
             
                     //insert into 'user_account_settings' node
                     setProfilePhoto(firebaseUrl.toString());
+    
+                    ((AccountSettingsActivity)m_context).setViewPager(
+                            ((AccountSettingsActivity)m_context).m_pagerAdapter.getFragmentNumber(m_context.getString(R.string.edit_profile_fragment))
+                    );
                     
                 }
             }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>()

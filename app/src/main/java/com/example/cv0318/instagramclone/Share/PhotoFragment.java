@@ -1,6 +1,7 @@
 package com.example.cv0318.instagramclone.Share;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.cv0318.instagramclone.Profile.AccountSettingsActivity;
 import com.example.cv0318.instagramclone.R;
 import com.example.cv0318.instagramclone.Utils.Permissions;
 
@@ -59,6 +61,18 @@ public class PhotoFragment extends Fragment
         });
         return view;
     }
+    
+    private boolean isRootTask()
+    {
+        if (((ShareActivity)getActivity()).getTask() == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -69,7 +83,28 @@ public class PhotoFragment extends Fragment
         {
             Log.d(TAG, "onActivityResult: done taking a photo");
             Log.d(TAG, "onActivityResult: attempting to navigate to sinal share screen");
-            //navigate to final share screen
+    
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            if (isRootTask())
+            {
+            
+            }
+            else
+            {
+                try
+                {
+                    Log.d(TAG, String.format("onActivityResult: received new bitmap from camera: %s", bitmap));
+                    Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+                    intent.putExtra(getString(R.string.selected_bitmap), bitmap);
+                    intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+                catch (NullPointerException e)
+                {
+                    Log.e(TAG, String.format("onActivityResult: NullPointerException: %s", e.getMessage()));
+                }
+            }
         }
     }
 }

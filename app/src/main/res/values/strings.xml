@@ -34,6 +34,7 @@
     <string name="profile_activity">Profile Activity</string>
     <string name="selected_image">selected_image</string>
     <string name="return_to_fragment">return_to_fragment</string>
+    <string name="selected_bitmap">selected_bitmap</string>
 
     <!--Share Tab names-->
     <string name="gallery">GALLERY</string>

@@ -1,6 +1,7 @@
 package com.example.cv0318.instagramclone.Profile;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import com.example.cv0318.instagramclone.Models.User;
 import com.example.cv0318.instagramclone.Models.UserAccountSettings;
 import com.example.cv0318.instagramclone.Models.UserSettings;
 import com.example.cv0318.instagramclone.R;
+import com.example.cv0318.instagramclone.Share.ShareActivity;
 import com.example.cv0318.instagramclone.Utils.FirebaseMethods;
 import com.example.cv0318.instagramclone.Utils.UniversalImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -228,6 +230,19 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
         mDescription.setText(settings.getDescription());
         mEmail.setText(user.getEmail());
         mPhoneNumber.setText(String.valueOf(user.getPhone_number()));
+        
+        mChangeProfilePhoto.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d(TAG, "onClick: changing profile photo");
+                Intent intent = new Intent(getActivity(), ShareActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); //268435456
+                getActivity().startActivity(intent);
+                getActivity().finish();
+            }
+        });
     }
 
     /**

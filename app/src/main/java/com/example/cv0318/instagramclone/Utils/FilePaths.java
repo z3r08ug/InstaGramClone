@@ -17,4 +17,6 @@ public class FilePaths
     public String PICTURES = String.format("%s/Pictures", ROOT_DIR);
 
     public String SD_CAMERA = String.format("%s/DCIM/Camera", SD_ROOT_DIR);
+    
+    public String FIREBASE_IMAGE_STORAGE = "photos/users/";
 }

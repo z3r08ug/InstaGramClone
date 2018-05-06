@@ -70,6 +70,13 @@ public class ShareActivity extends AppCompatActivity
         tabLayout.getTabAt(0).setText(getString(R.string.gallery));
         tabLayout.getTabAt(1).setText(getString(R.string.photo));
     }
+    
+    public int getTask()
+    {
+        Log.d(TAG, "getTask: "+getIntent().getFlags());
+        
+        return getIntent().getFlags();
+    }
 
     /**
      * verify all the permissions passed to the array

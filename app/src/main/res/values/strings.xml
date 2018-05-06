@@ -16,20 +16,29 @@
     <!--Firebase database fields-->
     <string name="dbname_users">users</string>
     <string name="dbname_user_account_settings">user_account_settings</string>
+    <string name="dbname_photos">photos</string>
+    <string name="dbname_user_photos">user_photos</string>
     <string name="field_username">username</string>
     <string name="field_email">email</string>
     <string name="field_display_name">display_name</string>
     <string name="field_website">website</string>
     <string name="field_description">description</string>
     <string name="field_phone_number">phone_number</string>
+
+    <!--Photo types-->
+    <string name="new_photo">new_photo</string>
+    <string name="profile_photo">profile_photo</string>
     
     <!--Intent extras-->
     <string name="calling_activity">calling_activity</string>
     <string name="profile_activity">Profile Activity</string>
+    <string name="selected_image">selected_image</string>
+    <string name="return_to_fragment">return_to_fragment</string>
 
     <!--Share Tab names-->
     <string name="gallery">GALLERY</string>
     <string name="photo">PHOTO</string>
     <string name="string_open_camera">Open Camera</string>
     <string name="string_next">Next</string>
+    <string name="string_share">Share</string>
 </resources>

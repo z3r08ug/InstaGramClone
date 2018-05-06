@@ -1,5 +1,6 @@
 package com.example.cv0318.instagramclone.Share;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.cv0318.instagramclone.Profile.AccountSettingsActivity;
 import com.example.cv0318.instagramclone.R;
 import com.example.cv0318.instagramclone.Utils.FilePaths;
 import com.example.cv0318.instagramclone.Utils.FileSearch;
@@ -43,6 +45,7 @@ public class GalleryFragment extends Fragment
     //vars
     private ArrayList<String> directories;
     private String m_append = "file:/";
+    private String m_SelectedImage;
 
     @Nullable
     @Override
@@ -79,14 +82,39 @@ public class GalleryFragment extends Fragment
             public void onClick(View v)
             {
                 Log.d(TAG, "onClick: navigating to the final share screen");
-
-
+                
+                if (isRootTask())
+                {
+                    Intent intent = new Intent(getActivity(), NextActivity.class);
+                    intent.putExtra(getString(R.string.selected_image), m_SelectedImage);
+                    startActivity(intent);
+                }
+                else
+                {
+                    Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+                    intent.putExtra(getString(R.string.selected_image), m_SelectedImage);
+                    intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
+                    getActivity().startActivity(intent);
+                    getActivity().finish();
+                }
             }
         });
 
         init();
 
         return view;
+    }
+    
+    private boolean isRootTask()
+    {
+        if (((ShareActivity)getActivity()).getTask() == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private void init()
@@ -103,7 +131,7 @@ public class GalleryFragment extends Fragment
         ArrayList<String> directoryNames = new ArrayList<>();
         for (int i = 0; i < directories.size(); i++)
         {
-            int index = directories.lastIndexOf("/");
+            int index = directories.get(i).lastIndexOf("/");
             String string = directories.get(i).substring(index);
             directoryNames.add(string);
         }
@@ -156,6 +184,7 @@ public class GalleryFragment extends Fragment
         if (!imgURLs.isEmpty())
         {
             setImage(imgURLs.get(0), m_galleryImage, m_append);
+            m_SelectedImage = imgURLs.get(0);
         }
 
         m_gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -165,6 +194,7 @@ public class GalleryFragment extends Fragment
             {
                 Log.d(TAG, "onItemClick: selected image: " + imgURLs.get(position));
                 setImage(imgURLs.get(position), m_galleryImage, m_append);
+                m_SelectedImage = imgURLs.get(position);
             }
         });
     }

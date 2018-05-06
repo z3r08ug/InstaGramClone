@@ -19,7 +19,7 @@
                     android:layout_marginEnd="20dp"
                     android:layout_centerVertical="true"
                     android:id="@+id/ivCloseNext"
-                    android:src="@drawable/ic_close"/>
+                    android:src="@drawable/ic_backarrow"/>
 
 
 

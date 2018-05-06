@@ -85,10 +85,22 @@ public class PhotoFragment extends Fragment
             Log.d(TAG, "onActivityResult: attempting to navigate to sinal share screen");
     
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            //coming from share activity
             if (isRootTask())
             {
-            
+                try
+                {
+                    Log.d(TAG, String.format("onActivityResult: received new bitmap from camera: %s", bitmap));
+                    Intent intent = new Intent(getActivity(), NextActivity.class);
+                    intent.putExtra(getString(R.string.selected_bitmap), bitmap);
+                    startActivity(intent);
+                }
+                catch (NullPointerException e)
+                {
+                    Log.e(TAG, String.format("onActivityResult: NullPointerException: %s", e.getMessage()));
+                }
             }
+            //coming from edit profile fragment
             else
             {
                 try

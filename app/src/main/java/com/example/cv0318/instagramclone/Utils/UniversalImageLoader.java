@@ -29,20 +29,21 @@ public class UniversalImageLoader
     public ImageLoaderConfiguration getConfig()
     {
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-            .showImageOnLoading(defaultImage)
-            .showImageForEmptyUri(defaultImage)
-            .showImageOnFail(defaultImage)
-            .cacheOnDisk(true).cacheInMemory(true)
-            .cacheOnDisk(true).resetViewBeforeLoading(true)
-            .imageScaleType(ImageScaleType.EXACTLY)
-            .displayer(new FadeInBitmapDisplayer(300))
-            .build();
+                .showImageOnLoading(defaultImage)
+                .showImageForEmptyUri(defaultImage)
+                .showImageOnFail(defaultImage)
+                .considerExifParams(true)
+                .cacheOnDisk(true).cacheInMemory(true)
+                .cacheOnDisk(true).resetViewBeforeLoading(true)
+                .imageScaleType(ImageScaleType.EXACTLY)
+                .displayer(new FadeInBitmapDisplayer(300))
+                .build();
 
         ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(m_context)
-            .defaultDisplayImageOptions(defaultOptions)
-            .memoryCache(new WeakMemoryCache())
-            .diskCacheSize(100 * 1024 * 1024)
-            .build();
+                .defaultDisplayImageOptions(defaultOptions)
+                .memoryCache(new WeakMemoryCache())
+                .diskCacheSize(100 * 1024 * 1024)
+                .build();
 
         return configuration;
     }
@@ -57,10 +58,10 @@ public class UniversalImageLoader
      * @param append
      */
     public static void setImage(
-        String url,
-        ImageView imageView,
-        final ProgressBar progressBar,
-        String append)
+            String url,
+            ImageView imageView,
+            final ProgressBar progressBar,
+            String append)
     {
         ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage(append + url, imageView, new ImageLoadingListener()
@@ -76,7 +77,7 @@ public class UniversalImageLoader
 
             @Override
             public void onLoadingFailed(
-                String imageUri, View view, FailReason failReason)
+                    String imageUri, View view, FailReason failReason)
             {
                 if (progressBar != null)
                 {
@@ -86,7 +87,7 @@ public class UniversalImageLoader
 
             @Override
             public void onLoadingComplete(
-                String imageUri, View view, Bitmap loadedImage)
+                    String imageUri, View view, Bitmap loadedImage)
             {
                 if (progressBar != null)
                 {

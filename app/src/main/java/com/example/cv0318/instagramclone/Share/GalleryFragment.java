@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class GalleryFragment extends Fragment
 {
     private static final String TAG = String.format("%s_TAG",
-        GalleryFragment.class.getSimpleName());
+            GalleryFragment.class.getSimpleName());
 
     private static final int NUM_GRID_COLS = 3;
 
@@ -50,9 +50,9 @@ public class GalleryFragment extends Fragment
     @Nullable
     @Override
     public View onCreateView(
-        @NonNull LayoutInflater inflater,
-        @Nullable ViewGroup container,
-        @Nullable Bundle savedInstanceState)
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
         m_gridView = view.findViewById(R.id.gvGallery);
@@ -82,7 +82,7 @@ public class GalleryFragment extends Fragment
             public void onClick(View v)
             {
                 Log.d(TAG, "onClick: navigating to the final share screen");
-                
+
                 if (isRootTask())
                 {
                     Intent intent = new Intent(getActivity(), NextActivity.class);
@@ -104,10 +104,10 @@ public class GalleryFragment extends Fragment
 
         return view;
     }
-    
+
     private boolean isRootTask()
     {
-        if (((ShareActivity)getActivity()).getTask() == 0)
+        if (((ShareActivity) getActivity()).getTask() == 0)
         {
             return true;
         }
@@ -137,7 +137,7 @@ public class GalleryFragment extends Fragment
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-            android.R.layout.simple_spinner_item, directoryNames);
+                android.R.layout.simple_spinner_item, directoryNames);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         m_directorySpinner.setAdapter(adapter);
@@ -175,16 +175,20 @@ public class GalleryFragment extends Fragment
 
         //use grid adapter to adapt the images to gridview
         GridImageAdapter adapter = new GridImageAdapter(getActivity(),
-            R.layout.layout_grid_imageview,
-            m_append,
-            imgURLs);
+                R.layout.layout_grid_imageview,
+                m_append,
+                imgURLs);
         m_gridView.setAdapter(adapter);
 
         //set first image to be displayed when the activity fragment view is inflated.
-        if (!imgURLs.isEmpty())
+        try
         {
             setImage(imgURLs.get(0), m_galleryImage, m_append);
             m_SelectedImage = imgURLs.get(0);
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            Log.e(TAG, String.format("setupGridView: ArrayIndexOutOfBoundsException: %s", e.getMessage()));
         }
 
         m_gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -213,7 +217,7 @@ public class GalleryFragment extends Fragment
 
             @Override
             public void onLoadingFailed(
-                String imageUri, View view, FailReason failReason)
+                    String imageUri, View view, FailReason failReason)
             {
                 m_progressBar.setVisibility(View.GONE);
             }

@@ -215,11 +215,11 @@ public class FirebaseMethods
         String newPhotoKey = myRef.child(m_context.getString(R.string.dbname_photos)).push().getKey();
         Photo photo = new Photo();
         photo.setCaption(caption);
-        photo.setDateCreated(getTimeStamp());
-        photo.setImagePath(url);
+        photo.setDate_created(getTimeStamp());
+        photo.setImage_path(url);
         photo.setTags(tags);
-        photo.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        photo.setPhotoId(newPhotoKey);
+        photo.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        photo.setPhoto_id(newPhotoKey);
         
         //insert into databse
         myRef.child(m_context.getString(R.string.dbname_user_photos))

@@ -1,30 +1,16 @@
 package com.example.cv0318.instagramclone.Profile;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toolbar;
 
-import com.example.cv0318.instagramclone.Home.HomeActivity;
 import com.example.cv0318.instagramclone.Models.Photo;
 import com.example.cv0318.instagramclone.R;
-import com.example.cv0318.instagramclone.Utils.BottomNavigationViewHelper;
-import com.example.cv0318.instagramclone.Utils.GridImageAdapter;
-import com.example.cv0318.instagramclone.Utils.UniversalImageLoader;
-import com.example.cv0318.instagramclone.ViewPostFragment;
-import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-
-import java.util.ArrayList;
+import com.example.cv0318.instagramclone.Utils.ViewPostFragment;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileFragment.OnGridImageSelectedListener
 {

@@ -1,5 +1,6 @@
 package com.example.cv0318.instagramclone.Utils;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,11 +42,17 @@ public class ViewPostFragment extends Fragment
 {
     private static final String TAG = String.format("%s_TAG", ViewPostFragment.class.getSimpleName());
 
+    public interface OnCommentThreadSelectedListener
+    {
+        void onCommentThreadSelectedListener(Photo photo);
+    }
+    private OnCommentThreadSelectedListener m_onCommentThreadSelectedListener;
+
     //widgets
     private SquareImageView m_postImage;
     private BottomNavigationViewEx m_bottomNavigationView;
     private TextView m_tvBackLabel, m_tvCaption, m_tvUserName, m_tvTimeStamp, m_likes;
-    private ImageView m_backArrow, m_ellipses, m_heartRed, m_heartWhite, m_profileImage;
+    private ImageView m_backArrow, m_ellipses, m_heartRed, m_heartWhite, m_profileImage, m_comment;
 
     //firebase
     private FirebaseAuth m_auth;
@@ -68,6 +75,7 @@ public class ViewPostFragment extends Fragment
 
     public ViewPostFragment()
     {
+        super();
         setArguments(new Bundle());
     }
 
@@ -88,6 +96,7 @@ public class ViewPostFragment extends Fragment
         m_heartRed = view.findViewById(R.id.ivRedHeart);
         m_profileImage = view.findViewById(R.id.profile_photo);
         m_likes = view.findViewById(R.id.tvImageLikes);
+        m_comment = view.findViewById(R.id.ivSpeechBubble);
 
         m_heart = new Heart(m_heartWhite, m_heartRed);
         m_gestureDetector = new GestureDetector(getActivity(), new GestureListener());
@@ -109,31 +118,46 @@ public class ViewPostFragment extends Fragment
         return view;
     }
 
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+
+        try
+        {
+            m_onCommentThreadSelectedListener = (OnCommentThreadSelectedListener) getActivity();
+        }
+        catch (ClassCastException e)
+        {
+            Log.e(TAG, "onAttach: ClassCastException"+e.getMessage());
+        }
+    }
+
     private void getLikesString()
     {
-        Log.d(TAG, "getLikesString: getting likes string. photoid: " + m_photo.getPhoto_id());
+        Log.d(TAG, "getLikesString: getting likes string for photoid: " + m_photo.getPhoto_id());
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
                 .child(getString(R.string.dbname_photos))
-                .orderByChild(getString(R.string.field_photo_id))
-                .equalTo(m_photo.getPhoto_id());
+                .child(m_photo.getPhoto_id())
+                .child(getString(R.string.field_likes));
 
         query.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
-                Log.d(TAG, "GetLikesString onDataChange: firstSnapshot: " + dataSnapshot);
+                Log.d(TAG, "Looking for 'likes' node onDataChange: firstSnapshot: " + dataSnapshot);
                 m_users = new StringBuilder();
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren())
                 {
-                    Log.d(TAG, "GetLikesString onDataChange: secondSnapshot: "+singleSnapshot);
+                    Log.d(TAG, "Looking for 'likes' node onDataChange: firstSnapshot child: " + singleSnapshot);
                     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
                     Query query = reference
                             .child(getString(R.string.dbname_users))
                             .orderByChild(getString(R.string.field_user_id))
-                            .equalTo(singleSnapshot.getValue(Photo.class).getUser_id());
+                            .equalTo(singleSnapshot.getValue(Like.class).getUser_id());
                     query.addListenerForSingleValueEvent(new ValueEventListener()
                     {
                         @Override
@@ -141,8 +165,66 @@ public class ViewPostFragment extends Fragment
                         {
                             for (DataSnapshot singleSnapshot : dataSnapshot.getChildren())
                             {
-                                m_users.append(singleSnapshot.getValue(User.class).getUsername());
+                                String user = singleSnapshot.getValue(User.class).getUsername();
+                                Log.d(TAG, "Finding user from 'likes' node: User: " + user + " liked the photo");
+                                m_users.append(user);
                                 m_users.append(",");
+                                Log.d(TAG, "onDataChange: Current LikesString: " + m_users.toString());
+                            }
+                            if (!dataSnapshot.exists())
+                            {
+                                Log.d(TAG, "onDataChange: There were no user ids that matched the liked user ids");
+                            }
+                            else
+                            {
+                                Log.d(TAG, "onDataChange: Users that liked photo: " + m_users.toString());
+
+                                String[] splitUsers = m_users.toString().split(",");
+
+                                if (m_users.toString().contains(m_userAccountSettings.getUsername() + ","))
+                                {
+                                    m_likedByCurrentUser = true;
+                                    Log.d(TAG, "onDataChange: liked by current user");
+                                }
+                                else
+                                {
+                                    Log.d(TAG, "onDataChange: not liked by current user");
+                                    m_likedByCurrentUser = false;
+                                }
+
+                                int length = splitUsers.length;
+                                Log.d(TAG, "onDataChange: Length of SplitUsers: " + length);
+                                for (int i = 0; i < length; i++)
+                                {
+                                    Log.d(TAG, "onDataChange: SplitUser # " + i + ": " + splitUsers[i]);
+                                }
+                                Log.d(TAG, "onDataChange: is user 0 blank: " + splitUsers[0].isEmpty());
+
+                                if (length == 1 && !splitUsers[0].isEmpty())
+                                {
+                                    m_likesString = String.format("Liked by %s", splitUsers[0]);
+                                }
+                                else if (length == 2)
+                                {
+                                    m_likesString = String.format("Liked by %s and %s", splitUsers[0], splitUsers[1]);
+                                }
+                                else if (length == 3)
+                                {
+                                    m_likesString = String.format("Liked by %s, %s, and %s", splitUsers[0], splitUsers[1], splitUsers[2]);
+                                }
+                                else if (length == 4)
+                                {
+                                    m_likesString = String.format("Liked by %s, %s, %s, and %s", splitUsers[0], splitUsers[1], splitUsers[2], splitUsers[3]);
+                                }
+                                else if (length > 4)
+                                {
+                                    m_likesString = String.format("Liked by %s, %s, %s, and %s others", splitUsers[0], splitUsers[1], splitUsers[2], (splitUsers.length - 3));
+                                }
+
+
+                                Log.d(TAG, String.format("onDataChange: likes string:%s", m_likesString));
+
+                                setupWidgets();
                             }
                         }
 
@@ -155,45 +237,9 @@ public class ViewPostFragment extends Fragment
 
                 }
 
-
-
-                String[] splitUsers = m_users.toString().split(",");
-
-                if (m_users.toString().contains(m_userAccountSettings.getUsername()))
-                {
-                    m_likedByCurrentUser = true;
-                }
-                else
-                {
-                    m_likedByCurrentUser = false;
-                }
-
-                int length = splitUsers.length;
-                if (length == 1)
-                {
-                    m_likesString = String.format("Liked by %s", splitUsers[0]);
-                }
-                else if (length == 2)
-                {
-                    m_likesString = String.format("Liked by %s and %s", splitUsers[0], splitUsers[1]);
-                }
-                else if (length == 3)
-                {
-                    m_likesString = String.format("Liked by %s, %s, and %s", splitUsers[0], splitUsers[1], splitUsers[2]);
-                }
-                else if (length == 4)
-                {
-                    m_likesString = String.format("Liked by %s, %s, %s, and %s", splitUsers[0], splitUsers[1], splitUsers[2], splitUsers[3]);
-                }
-                else if (length > 4)
-                {
-                    m_likesString = String.format("Liked by %s, %s, %s, and %s others", splitUsers[0], splitUsers[1], splitUsers[2], (splitUsers.length - 3));
-                }
-                Log.d(TAG, String.format("onDataChange: likes string:%s", m_likesString));
-                setupWidgets();
                 if (!dataSnapshot.exists())
                 {
-                    Log.d(TAG, "onDataChange: snapshot did not exist");
+                    Log.d(TAG, "onDataChange: snapshot did not exist. There are no likes on the photo.");
                     m_likesString = "";
                     m_likedByCurrentUser = false;
                     setupWidgets();
@@ -239,6 +285,7 @@ public class ViewPostFragment extends Fragment
                         //case 1: the user already liked the photo
                         if (m_likedByCurrentUser && singleSnapshot.getValue(Like.class).getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                         {
+                            Log.d(TAG, "onDataChange: user has already liked the photo so lets remove the like.");
                             myRef.child(getString(R.string.dbname_photos))
                                     .child(m_photo.getPhoto_id())
                                     .child(getString(R.string.field_likes))
@@ -259,6 +306,7 @@ public class ViewPostFragment extends Fragment
                         //case 2: the user has not liked the photo
                         else if (!m_likedByCurrentUser)
                         {
+                            Log.d(TAG, "onDataChange: User has not yet liked the photo so let's add a new like on it.");
                             //add new like
                             addNewLike();
                             break;
@@ -352,6 +400,27 @@ public class ViewPostFragment extends Fragment
             UniversalImageLoader.setImage(m_userAccountSettings.getProfile_photo(), m_profileImage, null, "");
             m_tvUserName.setText(m_userAccountSettings.getUsername());
             m_likes.setText(m_likesString);
+            m_tvCaption.setText(m_photo.getCaption());
+
+            m_backArrow.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Log.d(TAG, "onClick: navigating back");
+                    getActivity().getSupportFragmentManager().popBackStack();
+                }
+            });
+
+            m_comment.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Log.d(TAG, "onClick: navigating back");
+                    m_onCommentThreadSelectedListener.onCommentThreadSelectedListener(m_photo);
+                }
+            });
         }
         catch (NullPointerException e)
         {

@@ -190,6 +190,10 @@ public class GalleryFragment extends Fragment
         {
             Log.e(TAG, String.format("setupGridView: ArrayIndexOutOfBoundsException: %s", e.getMessage()));
         }
+        catch( IndexOutOfBoundsException e)
+        {
+            Log.e(TAG, String.format("setupGridView: IndexOutOfBoundsException: %s", e.getMessage()));
+        }
 
         m_gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {

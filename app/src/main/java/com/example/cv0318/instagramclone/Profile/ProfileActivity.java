@@ -10,9 +10,10 @@ import android.widget.ProgressBar;
 
 import com.example.cv0318.instagramclone.Models.Photo;
 import com.example.cv0318.instagramclone.R;
+import com.example.cv0318.instagramclone.Utils.ViewCommentsFragment;
 import com.example.cv0318.instagramclone.Utils.ViewPostFragment;
 
-public class ProfileActivity extends AppCompatActivity implements ProfileFragment.OnGridImageSelectedListener
+public class ProfileActivity extends AppCompatActivity implements ProfileFragment.OnGridImageSelectedListener, ViewPostFragment.OnCommentThreadSelectedListener
 {
     private static final String TAG = String.format("%s_TAG", ProfileActivity.class.getSimpleName());
     private static final int ACTIVITY_NUM = 4;
@@ -57,6 +58,22 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
         transaction.addToBackStack(getString(R.string.view_post_fragment));
+        transaction.commit();
+    }
+
+    @Override
+    public void onCommentThreadSelectedListener(Photo photo)
+    {
+        Log.d(TAG, "onCommentThreadSelectedListener: Selected a comments thread.");
+
+        ViewCommentsFragment fragment = new ViewCommentsFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.photo), photo);
+        fragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(getString(R.string.view_comments_fragment));
         transaction.commit();
     }
 }

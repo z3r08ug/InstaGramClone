@@ -20,7 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Search.SearchActivity"/>
+        <activity android:name=".Search.SearchActivity"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity android:name=".Likes.LikesActivity"/>
         <activity android:name=".Profile.ProfileActivity"/>
         <activity android:name=".Share.ShareActivity"/>
